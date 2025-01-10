@@ -47,12 +47,14 @@ from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
 
 from custom_models import (
-    CustomRoBERTaForSequenceClassification
+    CustomRoBERTaForSequenceClassification,
+    CustomGPT2ForSequenceClassification
 )
 from save_on_end_epoch import SaveOnEndEpochTrainerCallback
 
 MODEL_NAME_TO_CLASS = {
     "roberta_custom_hidden": CustomRoBERTaForSequenceClassification,
+    "gpt2_custom": CustomGPT2ForSequenceClassification
 }
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
