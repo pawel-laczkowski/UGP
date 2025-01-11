@@ -80,7 +80,6 @@ class CustomGPT2ClassificationHead(nn.Module):
     """
     Custom classification head based on ResNet-like MLP with BatchNorm and GELU.
     """
-
     def __init__(self, input_size, hidden_size, num_classes, dropout_prob=0.1):
         super(CustomGPT2ClassificationHead, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
@@ -94,13 +93,15 @@ class CustomGPT2ClassificationHead(nn.Module):
         self.fc3 = nn.Linear(hidden_size // 2, num_classes)
         self.dropout = nn.Dropout(dropout_prob)
 
+        self.fc_res = nn.Linear(hidden_size, hidden_size // 2)
+
     def forward(self, pooled_output):
         x = self.fc1(pooled_output)
         x = self.bn1(x)
         x = self.activation1(x)
         x = self.dropout(x)
 
-        x_res = x
+        x_res = self.fc_res(x)
 
         x = self.fc2(x)
         x = self.bn2(x)
@@ -146,7 +147,7 @@ class CustomGPT2ForSequenceClassification(GPT2ForSequenceClassification):
         )
         hidden_states = outputs.last_hidden_state
         pooled_output = hidden_states.mean(dim=1)
-        logits = self.classifier(pooled_output)
+        logits = self.score(pooled_output)
 
         loss = None
         if labels is not None:
